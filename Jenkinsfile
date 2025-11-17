@@ -32,7 +32,7 @@ pipeline {
 
                 sh """ 
 
-                curl -v -u "$USER:$PASS" \ 
+                curl -v -u "$USER:$PASS"\
 
                 --upload-file target/maven-demo-1.0.jar \ 
 
