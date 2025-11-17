@@ -34,35 +34,37 @@ pipeline {
 
                 )]) { 
 
-                    sh ''' 
+sh """ 
 
-                        echo "Listing target directory..." 
+echo "Listing target directory..." 
 
-                        ls -R 
+ls -R 
 
  
 
-                        if [ -f target/maven-demo-1.0.0.jar ]; then 
+if [ -f target/maven-demo-1.0.0.jar ]; then 
 
-                          echo "Uploading JAR to Nexus..." 
+    echo "Uploading JAR to Nexus..." 
 
-                          curl -v -u "$USER:$PASS" \ 
+ 
 
-                            --upload-file target/maven-demo-1.0.0.jar \ 
+    curl -v -u "$USER:$PASS" \ 
 
-                            http://localhost:8081/repository/maven-releases/com/example/maven-demo/1.0.0/maven-demo-1.0.0.jar 
+        --upload-file target/maven-demo-1.0.0.jar \ 
 
-                        else 
+        http://localhost:8081/repository/maven-releases/com/example/maven-demo/1.0.0/maven-demo-1.0.0.jar 
 
-                          echo "JAR not found in target/" 
+else 
 
-                          ls target || true 
+    echo "JAR not found in target/" 
 
-                          exit 1 
+    ls target || true 
 
-                        fi 
+    exit 1 
 
-                    ''' 
+fi 
+
+"""
 
                 } 
 
