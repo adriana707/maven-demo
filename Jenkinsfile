@@ -20,29 +20,25 @@ pipeline {
 
         stage('Upload to Nexus') { 
 
+            environment { 
+
+                USER = credentials('nexus-admin').username 
+
+                PASS = credentials('nexus-admin').password 
+
+            } 
+
             steps { 
 
-                withCredentials([usernamePassword( 
+                sh """ 
 
-                    credentialsId: 'nexus-admin', 
+                curl -v -u "$USER:$PASS" \ 
 
-                    usernameVariable: 'USER', 
+                --upload-file target/maven-demo-1.0.jar \ 
 
-                    passwordVariable: 'PASS' 
+                http://localhost:8081/repository/maven-releases/com/example/maven-demo/1.0/maven-demo-1.0.jar 
 
-                )]) { 
-
-                    sh """ 
-
-                    echo "Uploading JAR to Nexus..." 
-
-                    curl -v -u $USER:$PASS --upload-file target/maven-demo-1.0.0.jar \ 
-
-                    http://localhost:8081/repository/maven-releases/maven-demo-1.0.0.jar 
-
-                    """ 
-
-                } 
+                """ 
 
             } 
 
