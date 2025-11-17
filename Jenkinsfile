@@ -10,6 +10,8 @@ pipeline {
 
             steps { 
 
+                // build the JAR from pom.xml 
+
                 sh 'mvn clean package -DskipTests' 
 
             } 
@@ -20,25 +22,49 @@ pipeline {
 
         stage('Upload to Nexus') { 
 
-            environment { 
-
-                USER = credentials('nexus-admin').username 
-
-                PASS = credentials('nexus-admin').password 
-
-            } 
-
             steps { 
 
-                sh """ 
+                withCredentials([usernamePassword( 
 
-                curl -v -u "$USER:$PASS"\
+                    credentialsId: 'nexus-admin', 
 
-                --upload-file target/maven-demo-1.0.jar\ 
+                    usernameVariable: 'USER', 
 
-                http://localhost:8081/repository/maven-releases/com/example/maven-demo/1.0/maven-demo-1.0.jar 
+                    passwordVariable: 'PASS' 
 
-                """ 
+                )]) { 
+
+                    sh ''' 
+
+                        echo "Listing target directory..." 
+
+                        ls -R 
+
+ 
+
+                        if [ -f target/maven-demo-1.0.0.jar ]; then 
+
+                          echo "Uploading JAR to Nexus..." 
+
+                          curl -v -u "$USER:$PASS" \ 
+
+                            --upload-file target/maven-demo-1.0.0.jar \ 
+
+                            http://localhost:8081/repository/maven-releases/com/example/maven-demo/1.0.0/maven-demo-1.0.0.jar 
+
+                        else 
+
+                          echo "JAR not found in target/" 
+
+                          ls target || true 
+
+                          exit 1 
+
+                        fi 
+
+                    ''' 
+
+                } 
 
             } 
 
