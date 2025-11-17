@@ -34,7 +34,7 @@ pipeline {
 
                 curl -v -u "$USER:$PASS"\
 
-                --upload-file target/maven-demo-1.0.jar \ 
+                --upload-file target/maven-demo-1.0.jar\ 
 
                 http://localhost:8081/repository/maven-releases/com/example/maven-demo/1.0/maven-demo-1.0.jar 
 
